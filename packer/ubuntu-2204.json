@@ -25,41 +25,6 @@
   "provisioners": [
     {
       "type": "shell",
-{
-  "variables": {
-    "vm_name": "ubuntu-2204-base",
-    "ssh_username": "{{vault `secret/data/packer` `ssh_username`}}",
-    "ssh_password": "{{vault `secret/data/packer` `ssh_password`}}",
-    "iso_url": "https://releases.ubuntu.com/22.04/ubuntu-22.04.5-live-server-amd64.iso",
-    "iso_checksum": "sha256:2a0d5f2b3b6f0e6b9d5f9a0f4d3e8c6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e"
-  },
-  "builders": [
-    {
-      "type": "virtualbox-iso",
-      "vm_name": "{{user `vm_name`}}",
-      "guest_os_type": "Ubuntu_64",
-      "iso_url": "{{user `iso_url`}}",
-      "iso_checksum": "{{user `iso_checksum`}}",
-      "ssh_username": "{{user `ssh_username`}}",
-      "ssh_password": "{{user `ssh_password`}}",
-      "ssh_timeout": "30m",
-      "shutdown_command": "echo '{{user `ssh_password`}}' | sudo -S shutdown -P now",
-      "disk_size": 20000,
-      "memory": 2048,
-      "cpus": 2
-    }
-  ],
-  "provisioners": [
-    {
-      "type": "shell",
-      "inline": [
-        "sudo apt-get update",
-        "sudo apt-get install -y cloud-init openssh-server",
-        "sudo systemctl enable ssh"
-      ]
-    }
-  ]
-}
       "inline": [
         "sudo apt-get update",
         "sudo apt-get install -y cloud-init openssh-server",
