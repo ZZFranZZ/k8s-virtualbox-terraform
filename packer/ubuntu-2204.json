@@ -1,0 +1,42 @@
+{
+  "variables": {
+    "vm_name": "ubuntu-2204-base",
+    "ssh_username": "{{vault `secret/packer` `ssh_username`}}",
+    "ssh_password": "{{vault `secret/packer` `ssh_password`}}"
+  },
+  "builders": [
+    {
+      "type": "virtualbox-iso",
+      "vm_name": "{{user `vm_name`}}",
+      "guest_os_type": "Ubuntu_64",
+      "iso_url": "https://releases.ubuntu.com/22.04/ubuntu-22.04.5-live-server-amd64.iso",
+      "iso_checksum": "sha256:<HASH_OFICIAL>",
+      "ssh_username": "{{user `ssh_username`}}",
+      "ssh_password": "{{user `ssh_password`}}",
+      "ssh_timeout": "30m",
+      "shutdown_command": "echo '{{user `ssh_password`}}' | sudo -S shutdown -P now",
+      "disk_size": 20000,
+      "memory": 2048,
+      "cpus": 2,
+      "boot_command": [
+        "<esc><wait>",
+        "linux /install/vmlinuz ",
+        "auto console-setup/ask_detect=false console-setup/layoutcode=us ",
+        "locale=en_US ",
+        "keyboard-configuration/layout=USA ",
+        "initrd=/install/initrd.gz ",
+        "quiet --- <enter>"
+      ]
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "inline": [
+        "sudo apt-get update",
+        "sudo apt-get install -y cloud-init openssh-server",
+        "sudo systemctl enable ssh"
+      ]
+    }
+  ]
+}
